@@ -1,0 +1,6 @@
+# set the udev rule , make the device_port be fixed for Plutarco Robot
+KERNEL=="ttyUSB*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="0002", MODE:="0777", GROUP="users", SYMLINK+="ydlidar"
+KERNEL=="ttyUSB*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="0001", MODE:="0777", GROUP="users", SYMLINK+="rplidar"
+KERNEL=="ttyUSB*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A701313R", MODE:="0777", GROUP="users", SYMLINK+="imu"
+KERNEL=="ttyACM*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1546", ATTRS{idProduct}=="01a7", ATTRS{product}=="u-blox 7 - GPS/GNSS Receiver", MODE:="0777", GROUP="users", SYMLINK+="ublox"
+KERNEL=="ttyACM*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="003e", ATTRS{product}=="Arduino Due", MODE:="0777", GROUP="users", SYMLINK+="monitor"

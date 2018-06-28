@@ -1,0 +1,134 @@
+#########################################
+sudo sysctl -w net.core.rmem_max=33554432
+sudo sysctl -w net.core.wmem_max=33554432
+sudo sysctl -w net.core.rmem_default=33554432
+sudo sysctl -w net.core.wmem_default=33554432
+sudo ifconfig eth0 mtu 9000
+
+#########################################
+
+sudo apt-get install linux-firmware dnsmasq bluez-utils bluez-compat bluez-hcidump libusb-dev libbluetooth-dev joystick git dialog bluez blueman bluetooth bluez-tools gnome-bluetooth indicator-bluetooth
+
+
+sudo apt-get update
+sudo apt-get install git dialog build-essential pyqt4-dev-tools libusb-dev libjack-dev libbluetooth-dev python-dbus -y
+git clone https://github.com/falkTX/qtsixa.git
+cd qtsixa
+make
+sudo make install
+sudo service sixad start
+
+
+Su Jetson TK1 installare ros-jade:
+
+sudo apt-get install ros-jade-robot ros-jade-joy ros-jade-joy-teleop ros-jade-joystick-drivers ros-jade-twist-mux ros-jade-teleop-twist-joy  ros-jade-teleop-twist-keyboard ros-jade-serial  ros-jade-controller-manager ros-jade-control-msgs ros-jade-joint-limits-interface ros-jade-usb-cam   ros-jade-hardware-interface ros-jade-ros-control ros-jade-driver-common ros-jade-ros-control ros-jade-ros-control-boilerplate ros-jade-driver-common ros-jade-hardware-interface    ros-jade-pcl-ros ros-jade-perception-pcl ros-jade-pcl-conversions ros-jade-depthimage-to-laserscan
+
+
+Su PC installare ros-kinetic:
+sudo apt-get install ros-kinetic-joy ros-kinetic-joy-teleop ros-kinetic-key-teleop ros-kinetic-teleop-tools ros-kinetic-teleop-twist-joy ros-kinetic-teleop-twist-keyboard
+
+
+###############################
+
+non esistono in jade:
+ros-jade-serial-utils
+ros-jade-uvc-camera
+ros-jade-linux-peripheral-interfaces
+ros-jade-sr-hardware-interface
+ros-jade-libuvc 
+ros-jade-libuvc-camera 
+ros-jade-libuvc-ros
+
+ssh -X plutarco.local -l plutarco
+
+
+roscore &
+
+###############################
+
+su ROBOT lanciare questi launchfile per abilitare il funzionamento minimo:
+
+roslaunch plutarco_control driver.launch 
+roslaunch ros_rs_sensor_board rs_sensor_board.launch
+roslaunch zed_wrapper zed.launch
+###############################
+
+
+A questo punto conviene, su uno ( o differenti ) PC di supervisione lanciare questi nodi:
+
+###############################
+gedit catkin_ws/src/ros_plutarco/plutarco_control/config/teleop.yaml &
+roslaunch plutarco_control teleop.launch
+///    rosrun teleop_twist_keyboard teleop_twist_keyboard.py  cmd_vel:=/unav_velocity_controller/cmd_vel
+rosrun rqt_image_view rqt_image_view image:=/camera/rgb/image_rect_color
+rosrun rqt_reconfigure rqt_reconfigure
+rosrun rqt_plot rqt_plot 
+
+#########
+Con rqt_plot per tarare il PID conviene monitorare questi processi:
+
+rosrun rqt_plot rqt_plot \
+/unav/right_joint/control/velocity \
+/unav/right_joint/measure/velocity &
+
+
+rosrun rqt_plot rqt_plot \
+/unav/left_joint/control/velocity \
+/unav/left_joint/measure/velocity &
+
+Mentre per avere una visione più completa del funzionamento della uNav si possono graficare tutti questi messaggi:
+
+rosrun rqt_plot rqt_plot \
+/unav/right_joint/control/current \
+/unav/right_joint/control/effort \
+/unav/right_joint/control/position \
+/unav/right_joint/control/pwm \
+/unav/right_joint/control/velocity \
+/unav/right_joint/measure/current \
+/unav/right_joint/measure/effort \
+/unav/right_joint/measure/position \
+/unav/right_joint/measure/pwm \
+/unav/right_joint/measure/velocity &
+
+
+rosrun rqt_plot rqt_plot \
+/unav/left_joint/control/current \
+/unav/left_joint/control/effort \
+/unav/left_joint/control/position \
+/unav/left_joint/control/pwm \
+/unav/left_joint/control/velocity \
+/unav/left_joint/measure/current \
+/unav/left_joint/measure/effort \
+/unav/left_joint/measure/position \
+/unav/left_joint/measure/pwm \
+/unav/left_joint/measure/velocity &
+
+
+
+
+
+
+Altri Topic che può essere interessante graficare:
+/unav/right_joint/status/voltage
+/unav/left_joint/status/voltage
+/unav/system/idle
+/unav/system/ADC
+
+
+
+
+
+
+
+###############################
+Joy - CONSOLE
+rosparam set joy_node/dev "/dev/input/js1"
+rosrun joy joy_node
+rosrun teleop_twist_joy teleop_node cmd_vel:=/unav_velocity_controller/cmd_vel
+###############################
+
+
+su CONSOLE:
+rosrun rqt_image_view rqt_image_view image:=/camera/rgb/image_rect_color
+###############################
+
